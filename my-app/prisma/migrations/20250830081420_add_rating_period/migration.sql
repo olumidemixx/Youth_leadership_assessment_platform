@@ -1,0 +1,9 @@
+-- CreateTable
+CREATE TABLE "RatingPeriod" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "startDate" DATETIME NOT NULL,
+    "endDate" DATETIME NOT NULL,
+    "isActive" BOOLEAN NOT NULL DEFAULT true,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" DATETIME NOT NULL
+);
