@@ -8,7 +8,7 @@ export async function GET() {
       orderBy: { createdAt: "desc" },
     });
     return NextResponse.json(profiles);
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Error fetching profiles:", error);
     return NextResponse.json({ error: "Failed to fetch profiles" }, { status: 500 });
   }
@@ -25,7 +25,7 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json(newProfile, { status: 201 });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Error creating profile:", error);
     return NextResponse.json({ error: "Failed to create profile" }, { status: 500 });
   }

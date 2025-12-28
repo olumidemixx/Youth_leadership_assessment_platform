@@ -8,7 +8,7 @@ export async function GET(
 ) {
   try {
     const { id } = await context.params;
-    
+
     const profile = await prisma.profile.findUnique({
       where: { id: Number(id) },
     });
@@ -18,7 +18,7 @@ export async function GET(
     }
 
     return NextResponse.json(profile);
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Error fetching profile:", error);
     return NextResponse.json({ error: "Failed to fetch profile" }, { status: 500 });
   }

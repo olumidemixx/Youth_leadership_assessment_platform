@@ -44,28 +44,28 @@ export async function POST(
         { status: 404 }
       );
     }
-    
+
     // Check if current time is within the allowed rating period
     const now = new Date();
     const activePeriod = await prisma.ratingPeriod.findFirst({
       where: { isActive: true },
       orderBy: { updatedAt: 'desc' }
     });
-    
+
     if (!activePeriod) {
       return NextResponse.json(
         { error: "Rating submission is not available at this time. No active rating period has been set." },
         { status: 403 }
       );
     }
-    
+
     const startDate = new Date(activePeriod.startDate);
     const endDate = new Date(activePeriod.endDate);
-    
+
     if (now < startDate || now > endDate) {
       return NextResponse.json(
-        { 
-          error: "Rating submission is not available at this time.", 
+        {
+          error: "Rating submission is not available at this time.",
           periodInfo: {
             start: startDate.toISOString(),
             end: endDate.toISOString(),
@@ -89,17 +89,17 @@ export async function POST(
     });
 
     return NextResponse.json({ success: true, rating });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("POST /api/ratings/[id] error:", error);
-    
+
     // Handle specific Prisma errors
-    if (error.code === 'P2003') {
+    if (error && typeof error === 'object' && 'code' in error && error.code === 'P2003') {
       return NextResponse.json(
         { error: "Profile not found or invalid profile ID" },
         { status: 400 }
       );
     }
-    
+
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }
@@ -129,7 +129,7 @@ export async function GET(
     });
 
     return NextResponse.json({ profileId: id, ratings });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("GET /api/ratings/[id] error:", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }

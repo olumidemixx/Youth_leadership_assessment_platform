@@ -1,6 +1,5 @@
 "use client";
 import { useState, useEffect } from "react";
-import { format } from "date-fns";
 import Link from "next/link";
 
 interface Rating {
@@ -27,12 +26,12 @@ export default function AdminPage() {
   const [roleToAssign, setRoleToAssign] = useState("");
   const [roleLoading, setRoleLoading] = useState(false);
   const [roleMessage, setRoleMessage] = useState("");
-  
+
   const [ratingsEmail, setRatingsEmail] = useState("");
   const [ratingsLoading, setRatingsLoading] = useState(false);
   const [ratingsMessage, setRatingsMessage] = useState("");
   const [userRatings, setUserRatings] = useState<Rating[]>([]);
-  
+
   // Rating Period Management
   const [currentPeriod, setCurrentPeriod] = useState<RatingPeriod | null>(null);
   const [startDate, setStartDate] = useState("");
@@ -56,7 +55,7 @@ export default function AdminPage() {
       } else {
         setRoleMessage(data.error || "Failed to update role");
       }
-    } catch (err) {
+    } catch (_err) {
       setRoleMessage("An error occurred. Please try again.");
     } finally {
       setRoleLoading(false);
@@ -78,7 +77,7 @@ export default function AdminPage() {
         setRatingCount(data.ratingCount);
       })
       .catch(() => setStatsError("Failed to load stats"));
-    
+
     // Fetch current rating period
     fetch("/api/admin/period")
       .then(res => res.json())
@@ -140,16 +139,16 @@ export default function AdminPage() {
     e.preventDefault();
     setPeriodLoading(true);
     setPeriodMessage("");
-    
+
     try {
       const res = await fetch("/api/admin/period", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ startDate, endDate }),
       });
-      
+
       const data = await res.json();
-      
+
       if (res.ok && data.success) {
         setCurrentPeriod(data.period);
         setPeriodMessage("Rating period set successfully");
@@ -158,20 +157,20 @@ export default function AdminPage() {
       } else {
         setPeriodMessage(data.error || "Failed to set rating period");
       }
-    } catch (err) {
+    } catch (_err) {
       setPeriodMessage("An error occurred. Please try again.");
     } finally {
       setPeriodLoading(false);
     }
   };
-  
+
   const handleUpdatePeriod = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!currentPeriod) return;
-    
+
     setPeriodLoading(true);
     setPeriodMessage("");
-    
+
     try {
       const res = await fetch("/api/admin/period", {
         method: "PATCH",
@@ -182,9 +181,9 @@ export default function AdminPage() {
           endDate: endDate || undefined,
         }),
       });
-      
+
       const data = await res.json();
-      
+
       if (res.ok && data.success) {
         setCurrentPeriod(data.period);
         setPeriodMessage("Rating period updated successfully");
@@ -193,13 +192,13 @@ export default function AdminPage() {
       } else {
         setPeriodMessage(data.error || "Failed to update rating period");
       }
-    } catch (err) {
+    } catch (_err) {
       setPeriodMessage("An error occurred. Please try again.");
     } finally {
       setPeriodLoading(false);
     }
   };
-  
+
   return (
     <div className="flex flex-col items-center justify-center min-h-screen">
       <h1 className="text-2xl font-bold text-purple-600 mb-6">Admin Role Manager</h1>
@@ -208,8 +207,8 @@ export default function AdminPage() {
         <div className="flex flex-col gap-2 bg-gray-50 p-4 rounded shadow">
           <div className="font-semibold">Total Users Signed Up: {userCount !== null ? userCount : "..."}</div>
           <div className="font-semibold">Total Ratings Submitted: {ratingCount !== null ? ratingCount : "..."}</div>
-          <Link 
-            href="/profiles" 
+          <Link
+            href="/profiles"
             className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg mt-3 transition-colors"
           >
             View Profiles to Rate
@@ -219,7 +218,7 @@ export default function AdminPage() {
       <div className="max-w-xl mx-auto mt-12 p-8 bg-white rounded shadow">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold text-center">Admin Panel</h1>
-          
+
         </div>
 
         {/* --- Rating Management Section --- */}
@@ -294,11 +293,11 @@ export default function AdminPage() {
           </button>
           {roleMessage && <div className="mt-2 text-center text-sm font-semibold">{roleMessage}</div>}
         </form>
-        
+
         {/* --- Rating Period Management Section --- */}
         <div className="mb-8">
           <h2 className="text-lg font-semibold mb-2">Rating Period Management</h2>
-          
+
           {currentPeriod ? (
             <div className="mb-4 p-3 bg-gray-50 rounded">
               <h3 className="font-medium text-sm mb-1">Current Rating Period:</h3>
@@ -315,7 +314,7 @@ export default function AdminPage() {
           ) : (
             <p className="text-sm mb-4">No active rating period set.</p>
           )}
-          
+
           <form onSubmit={currentPeriod ? handleUpdatePeriod : handleSetPeriod} className="flex flex-col gap-3">
             <div>
               <label className="block text-sm font-medium mb-1">Start Date and Time</label>
@@ -327,7 +326,7 @@ export default function AdminPage() {
                 required={!currentPeriod}
               />
             </div>
-            
+
             <div>
               <label className="block text-sm font-medium mb-1">End Date and Time</label>
               <input
@@ -338,7 +337,7 @@ export default function AdminPage() {
                 required={!currentPeriod}
               />
             </div>
-            
+
             <button
               type="submit"
               className="bg-green-600 text-white p-2 rounded disabled:opacity-50"
@@ -347,10 +346,10 @@ export default function AdminPage() {
               {periodLoading
                 ? "Processing..."
                 : currentPeriod
-                ? "Update Period"
-                : "Set Rating Period"}
+                  ? "Update Period"
+                  : "Set Rating Period"}
             </button>
-            
+
             {periodMessage && (
               <div className="mt-2 text-center text-sm font-semibold">
                 {periodMessage}

@@ -92,8 +92,8 @@ export async function PATCH(req: Request) {
     }
 
     // Prepare update data
-    const updateData: any = {};
-    
+    const updateData: { startDate?: Date; endDate?: Date; isActive?: boolean } = {};
+
     if (startDate !== undefined) {
       const parsedStartDate = new Date(startDate);
       if (isNaN(parsedStartDate.getTime())) {

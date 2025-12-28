@@ -60,7 +60,7 @@ interface ApiResponse {
 
 export default function ResultsPage() {
   const [results, setResults] = useState<Result[]>([]);
-  const [statistics, setStatistics] = useState<StatisticalSummary | null>(null);
+  const [, setStatistics] = useState<StatisticalSummary | null>(null);
   const [selectedCandidates, setSelectedCandidates] = useState<string[]>([]);
 
   useEffect(() => {
@@ -82,35 +82,35 @@ export default function ResultsPage() {
   // Function to classify leadership type based on z-scores
   const classifyLeadershipType = (zScores: { q1: number; q2: number; q3: number; q4: number; q5: number }) => {
     const { q1: transparency, q2: moral, q3: balancedProcessing, q4: selfAwareness } = zScores;
-    
+
     // Helper function to categorize z-score
     const categorize = (score: number) => {
       if (score > 0.5) return 'high';
       if (score >= -0.5) return 'average';
       return 'low';
     };
-    
+
     const transparencyLevel = categorize(transparency);
     const moralLevel = categorize(moral);
     const balancedProcessingLevel = categorize(balancedProcessing);
     const selfAwarenessLevel = categorize(selfAwareness);
-    
+
     // Classification logic based on the profiles
     // 1. Low Global Authentic: Self-awareness: Average, Balanced processing: Moderately low, Transparency: Average, Moral perspective: Average
     if (selfAwarenessLevel === 'average' && balancedProcessingLevel === 'low' && transparencyLevel === 'average' && moralLevel === 'average') {
       return 'Low Global Authentic';
     }
-    
+
     // 3. Low Specific Self-Awareness: Self-awareness: Very low, Balanced processing: Moderately high, Transparency: Average, Moral perspective: Average
     if (selfAwarenessLevel === 'low' && balancedProcessingLevel === 'high' && transparencyLevel === 'average' && moralLevel === 'average') {
       return 'Low Specific Self-Awareness';
     }
-    
+
     // 4. High Specific Balanced Processing: Self-awareness: High, Balanced processing: Very high, Transparency: Moderately low, Moral perspective: Average
     if (selfAwarenessLevel === 'high' && balancedProcessingLevel === 'high' && transparencyLevel === 'low' && moralLevel === 'average') {
       return 'High Specific Balanced Processing';
     }
-    
+
     // 2. Normative (default): Self-awareness: Average, Balanced processing: Average, Transparency: Average, Moral perspective: Average
     return 'Normative';
   };
@@ -133,7 +133,7 @@ export default function ResultsPage() {
 
   // Build chart data for a given question (Q1–Q5)
   const buildChartData = (qKey: "q1" | "q2" | "q3" | "q4" | "q5") => {
-    const data: { candidate: string; score: number; raterCount: number; [key: string]: any }[] = [];
+    const data: { candidate: string; score: number; raterCount: number;[key: string]: string | number }[] = [];
 
     results.forEach((r) => {
       const candidateName = `${r.profile.firstName} ${r.profile.lastName}`;
@@ -210,7 +210,7 @@ export default function ResultsPage() {
 
   // Global Authentic Leadership chart component
   const GlobalAuthenticLeadershipChart = () => {
-    const chartData: { candidate: string; score: number; raterCount: number; [key: string]: any }[] = [];
+    const chartData: { candidate: string; score: number; raterCount: number;[key: string]: string | number }[] = [];
 
     results.forEach((r) => {
       const candidateName = `${r.profile.firstName} ${r.profile.lastName}`;
@@ -297,7 +297,7 @@ export default function ResultsPage() {
   const downloadPDF = () => {
     // Create a new window with the current page content for printing
     const printWindow = window.open('', '_blank');
-    
+
     if (!printWindow) {
       alert('Please allow popups to download the PDF');
       return;
@@ -305,7 +305,7 @@ export default function ResultsPage() {
 
     // Get the current page content
     const resultsContent = document.querySelector('[data-results-content]');
-    
+
     if (!resultsContent) {
       alert('Unable to find results content');
       return;
@@ -370,15 +370,15 @@ export default function ResultsPage() {
         </body>
       </html>
     `;
-    
+
     printWindow.document.write(printContent);
     printWindow.document.close();
-    
+
     // Wait for content to load, then trigger print
     setTimeout(() => {
       printWindow.focus();
       printWindow.print();
-      
+
       // Close the window after printing
       setTimeout(() => {
         printWindow.close();
@@ -390,7 +390,7 @@ export default function ResultsPage() {
     <div className="min-h-screen bg-gray-50 flex flex-col items-center p-6">
       <div className="w-full max-w-4xl flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold text-green-700">
-          All Candidates' Ratings
+          All Candidates&apos; Ratings
         </h1>
         <button
           onClick={downloadPDF}
@@ -456,7 +456,7 @@ export default function ResultsPage() {
           <QuestionChart qKey="q2" title="D2: Moral/Ethical" />
           <QuestionChart qKey="q3" title="D3: Balanced Processing" />
           <QuestionChart qKey="q4" title="D4: Self Awareness" />
-          
+
           {/* Global Authentic Leadership Chart */}
           <GlobalAuthenticLeadershipChart />
 
@@ -473,7 +473,7 @@ export default function ResultsPage() {
                 .map((r) => {
                   const candidateName = `${r.profile.firstName} ${r.profile.lastName}`;
                   const leadershipType = classifyLeadershipType(r.zScores);
-                  
+
                   // Get color based on leadership type
                   const getTypeColor = (type: string) => {
                     switch (type) {
@@ -484,7 +484,7 @@ export default function ResultsPage() {
                       default: return 'bg-gray-100 border-gray-500 text-gray-800';
                     }
                   };
-                  
+
                   return (
                     <div key={candidateName} className={`p-4 rounded-lg border-l-4 ${getTypeColor(leadershipType)}`}>
                       <div className="font-semibold text-lg">{candidateName}</div>
