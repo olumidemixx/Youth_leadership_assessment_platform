@@ -341,7 +341,7 @@ export default function AdminPage() {
             <button
               type="submit"
               className="bg-green-600 text-white p-2 rounded disabled:opacity-50"
-              disabled={periodLoading || (!currentPeriod && (!startDate || !endDate)) || (currentPeriod && !startDate && !endDate)}
+              disabled={Boolean(periodLoading || (!currentPeriod && (!startDate || !endDate)) || (currentPeriod && !startDate && !endDate))}
             >
               {periodLoading
                 ? "Processing..."
